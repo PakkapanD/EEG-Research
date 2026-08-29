@@ -1,0 +1,162 @@
+{
+  "random_state": 42,
+  "configs": {
+    "Full-18": {
+      "n_channels": 18,
+      "channels": [
+        "FP1-F7",
+        "F7-T7",
+        "T7-P7",
+        "P7-O1",
+        "FP1-F3",
+        "F3-C3",
+        "C3-P3",
+        "P3-O1",
+        "FP2-F4",
+        "F4-C4",
+        "C4-P4",
+        "P4-O2",
+        "FP2-F8",
+        "F8-T8",
+        "T8-P8",
+        "P8-O2",
+        "FZ-CZ",
+        "CZ-PZ"
+      ],
+      "data_driven": false,
+      "tier": "A"
+    },
+    "Glass-7": {
+      "n_channels": 7,
+      "channels": [
+        "FP1-F7",
+        "F7-T7",
+        "T7-FT9",
+        "FT9-FT10",
+        "FT10-T8",
+        "F8-T8",
+        "FP2-F8"
+      ],
+      "data_driven": false,
+      "tier": "B"
+    },
+    "Glass-4": {
+      "n_channels": 4,
+      "channels": [
+        "FP1-F7",
+        "F7-T7",
+        "F8-T8",
+        "FP2-F8"
+      ],
+      "data_driven": false,
+      "tier": "A"
+    },
+    "Glass-2": {
+      "n_channels": 2,
+      "channels": [
+        "F7-T7",
+        "F8-T8"
+      ],
+      "data_driven": false,
+      "tier": "A"
+    },
+    "Best-7": {
+      "n_channels": 7,
+      "channels": null,
+      "data_driven": true,
+      "tier": "A"
+    },
+    "Best-4": {
+      "n_channels": 4,
+      "channels": null,
+      "data_driven": true,
+      "tier": "A"
+    },
+    "Best-2": {
+      "n_channels": 2,
+      "channels": null,
+      "data_driven": true,
+      "tier": "A"
+    }
+  },
+  "loo_configs": [
+    "Full-18",
+    "Glass-2",
+    "Glass-7"
+  ],
+  "loo_configs_status": "proposed in spec 2 section 3, not yet confirmed",
+  "models": [
+    "rf",
+    "lr",
+    "mlp"
+  ],
+  "model_hyperparams": {
+    "rf": {
+      "n_estimators": 300,
+      "max_depth": null,
+      "min_samples_leaf": 1,
+      "class_weight": "balanced",
+      "random_state": 42,
+      "n_jobs": -1
+    },
+    "lr": {
+      "penalty": "l2",
+      "C": 1.0,
+      "solver": "lbfgs",
+      "max_iter": 1000,
+      "class_weight": "balanced",
+      "random_state": 42
+    },
+    "mlp": {
+      "hidden_layer_sizes": [
+        64,
+        32
+      ],
+      "activation": "relu",
+      "alpha": 0.0001,
+      "max_iter": 200,
+      "early_stopping": true,
+      "n_iter_no_change": 10,
+      "random_state": 42
+    }
+  },
+  "n_features_per_channel_selected": 30,
+  "undersample_ratio": 10,
+  "five_fold_tuning_rule": "tuning subjects for test fold i = fold (i+1) % 5; fit subjects = the other 3 folds. Not specified by spec 2 (section 4's open question was scoped to LOO only) - proposed here, flagged for objection.",
+  "best_n_ranking": "preliminary RF (same hyperparams as model_hyperparams.rf) fit on the fold's undersampled fit-subject data over all 18 double-banana channels; feature_importances_ summed per channel; top n taken. Fit only on fit-subjects, never tuning/test (CLAUDE.md rule 1).",
+  "threshold_grid_n": 279,
+  "threshold_grid_range": [
+    0.0001,
+    0.99
+  ],
+  "postprocessing_grid": {
+    "smoothing_k": [
+      1
+    ],
+    "min_event_duration_sec": [
+      0,
+      1,
+      2
+    ],
+    "merge_gap_sec": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      30
+    ],
+    "max_event_duration_sec": 300
+  },
+  "sufficiency_criteria": {
+    "medication_titration": {
+      "sensitivity_min": 0.6,
+      "fa_per_day_max": 5
+    },
+    "realtime_alert": {
+      "sensitivity_min": 0.8,
+      "fa_per_day_max": 2
+    }
+  }
+}

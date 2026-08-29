@@ -1,0 +1,804 @@
+{
+  "random_state": 42,
+  "n_subjects": 23,
+  "subjects": [
+    "chb01+21",
+    "chb02",
+    "chb03",
+    "chb04",
+    "chb05",
+    "chb06",
+    "chb07",
+    "chb08",
+    "chb09",
+    "chb10",
+    "chb11",
+    "chb12",
+    "chb13",
+    "chb14",
+    "chb15",
+    "chb16",
+    "chb17",
+    "chb18",
+    "chb19",
+    "chb20",
+    "chb22",
+    "chb23",
+    "chb24"
+  ],
+  "seizure_counts_tier_a": {
+    "chb01+21": 10,
+    "chb02": 3,
+    "chb03": 7,
+    "chb04": 4,
+    "chb05": 5,
+    "chb06": 8,
+    "chb07": 2,
+    "chb08": 5,
+    "chb09": 4,
+    "chb10": 7,
+    "chb11": 3,
+    "chb12": 27,
+    "chb13": 12,
+    "chb14": 8,
+    "chb15": 20,
+    "chb16": 10,
+    "chb17": 3,
+    "chb18": 6,
+    "chb19": 3,
+    "chb20": 8,
+    "chb22": 3,
+    "chb23": 7,
+    "chb24": 16
+  },
+  "five_fold": {
+    "method": "greedy load-balanced partition (LPT bin-packing) on each subject's Tier A seizure count, random_state=42 tie-break shuffle, max 5 subjects/fold",
+    "n_folds": 5,
+    "folds": {
+      "0": [
+        "chb12",
+        "chb17",
+        "chb18"
+      ],
+      "1": [
+        "chb02",
+        "chb09",
+        "chb11",
+        "chb15",
+        "chb20"
+      ],
+      "2": [
+        "chb04",
+        "chb06",
+        "chb07",
+        "chb23",
+        "chb24"
+      ],
+      "3": [
+        "chb05",
+        "chb10",
+        "chb13",
+        "chb14",
+        "chb22"
+      ],
+      "4": [
+        "chb01+21",
+        "chb03",
+        "chb08",
+        "chb16",
+        "chb19"
+      ]
+    },
+    "fold_seizure_totals": {
+      "0": 36,
+      "1": 38,
+      "2": 37,
+      "3": 35,
+      "4": 35
+    }
+  },
+  "loo": {
+    "method": "fixed seeded permutation (random_state=42) of the 23 subjects; tuning pool for held-out S = next 3 subjects after S in the ring, wrap-around, excluded from that fold's RF fit. Blind to the held-out subject's own characteristics (spec 2 section 12 item 2).",
+    "fixed_order": [
+      "chb16",
+      "chb10",
+      "chb01+21",
+      "chb09",
+      "chb18",
+      "chb13",
+      "chb02",
+      "chb14",
+      "chb06",
+      "chb03",
+      "chb12",
+      "chb22",
+      "chb04",
+      "chb05",
+      "chb19",
+      "chb17",
+      "chb23",
+      "chb24",
+      "chb08",
+      "chb11",
+      "chb15",
+      "chb20",
+      "chb07"
+    ],
+    "tuning_pool_size": 3,
+    "recommended_configs": [
+      "Full-18",
+      "Glass-2",
+      "Glass-7"
+    ],
+    "recommended_configs_status": "proposed in spec 2 section 3, not yet confirmed",
+    "folds": {
+      "chb16": {
+        "held_out": "chb16",
+        "tuning_pool": [
+          "chb10",
+          "chb01+21",
+          "chb09"
+        ],
+        "fit_subjects": [
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb10": {
+        "held_out": "chb10",
+        "tuning_pool": [
+          "chb01+21",
+          "chb09",
+          "chb18"
+        ],
+        "fit_subjects": [
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb01+21": {
+        "held_out": "chb01+21",
+        "tuning_pool": [
+          "chb09",
+          "chb18",
+          "chb13"
+        ],
+        "fit_subjects": [
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb09": {
+        "held_out": "chb09",
+        "tuning_pool": [
+          "chb18",
+          "chb13",
+          "chb02"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb18": {
+        "held_out": "chb18",
+        "tuning_pool": [
+          "chb13",
+          "chb02",
+          "chb14"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb13": {
+        "held_out": "chb13",
+        "tuning_pool": [
+          "chb02",
+          "chb14",
+          "chb06"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb02": {
+        "held_out": "chb02",
+        "tuning_pool": [
+          "chb14",
+          "chb06",
+          "chb03"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb04",
+          "chb05",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb14": {
+        "held_out": "chb14",
+        "tuning_pool": [
+          "chb06",
+          "chb03",
+          "chb12"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb04",
+          "chb05",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb13",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb06": {
+        "held_out": "chb06",
+        "tuning_pool": [
+          "chb03",
+          "chb12",
+          "chb22"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb04",
+          "chb05",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb03": {
+        "held_out": "chb03",
+        "tuning_pool": [
+          "chb12",
+          "chb22",
+          "chb04"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb12": {
+        "held_out": "chb12",
+        "tuning_pool": [
+          "chb22",
+          "chb04",
+          "chb05"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb22": {
+        "held_out": "chb22",
+        "tuning_pool": [
+          "chb04",
+          "chb05",
+          "chb19"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb20",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb04": {
+        "held_out": "chb04",
+        "tuning_pool": [
+          "chb05",
+          "chb19",
+          "chb17"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb18",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb05": {
+        "held_out": "chb05",
+        "tuning_pool": [
+          "chb19",
+          "chb17",
+          "chb23"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb18",
+          "chb20",
+          "chb22",
+          "chb24"
+        ]
+      },
+      "chb19": {
+        "held_out": "chb19",
+        "tuning_pool": [
+          "chb17",
+          "chb23",
+          "chb24"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb18",
+          "chb20",
+          "chb22"
+        ]
+      },
+      "chb17": {
+        "held_out": "chb17",
+        "tuning_pool": [
+          "chb23",
+          "chb24",
+          "chb08"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb22"
+        ]
+      },
+      "chb23": {
+        "held_out": "chb23",
+        "tuning_pool": [
+          "chb24",
+          "chb08",
+          "chb11"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb09",
+          "chb10",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb22"
+        ]
+      },
+      "chb24": {
+        "held_out": "chb24",
+        "tuning_pool": [
+          "chb08",
+          "chb11",
+          "chb15"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb09",
+          "chb10",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23"
+        ]
+      },
+      "chb08": {
+        "held_out": "chb08",
+        "tuning_pool": [
+          "chb11",
+          "chb15",
+          "chb20"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb07",
+          "chb09",
+          "chb10",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb11": {
+        "held_out": "chb11",
+        "tuning_pool": [
+          "chb15",
+          "chb20",
+          "chb07"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb16",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb15": {
+        "held_out": "chb15",
+        "tuning_pool": [
+          "chb20",
+          "chb07",
+          "chb16"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb08",
+          "chb09",
+          "chb10",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb20": {
+        "held_out": "chb20",
+        "tuning_pool": [
+          "chb07",
+          "chb16",
+          "chb10"
+        ],
+        "fit_subjects": [
+          "chb01+21",
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb08",
+          "chb09",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      },
+      "chb07": {
+        "held_out": "chb07",
+        "tuning_pool": [
+          "chb16",
+          "chb10",
+          "chb01+21"
+        ],
+        "fit_subjects": [
+          "chb02",
+          "chb03",
+          "chb04",
+          "chb05",
+          "chb06",
+          "chb08",
+          "chb09",
+          "chb11",
+          "chb12",
+          "chb13",
+          "chb14",
+          "chb15",
+          "chb17",
+          "chb18",
+          "chb19",
+          "chb20",
+          "chb22",
+          "chb23",
+          "chb24"
+        ]
+      }
+    }
+  }
+}

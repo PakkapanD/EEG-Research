@@ -1,0 +1,14 @@
+[4] Sopic, D., Aminifar, A., & Atienza, D. (2018). e-Glass: A Wearable System for Real-Time Detection of Epileptic Seizures. In 2018 IEEE International Symposium on Circuits and Systems (ISCAS), 1–5. https://doi.org/10.1109/ISCAS.2018.8351728
+
+[5] Zanetti, R., Aminifar, A., & Atienza, D. (2025). EEG glasses for real-time brain electrical activity monitoring. Scientific Reports, 15(1), Article 43574. https://doi.org/10.1038/s41598-025-29893-4
+
+[6] Ali, E., Angelova, M., & Karmakar, C. (2024). Epileptic seizure detection using CHB-MIT dataset: The overlooked perspectives. Royal Society Open Science, 11(5), 230601. https://doi.org/10.1098/rsos.230601
+
+[8] Shah, V., Golmohammadi, M., Ziyabari, S., Von Weltin, E., Obeid, I., & Picone, J. (2017). Optimizing channel selection for seizure detection. In 2017 IEEE Signal Processing in Medicine and Biology Symposium (SPMB), 1–5. Philadelphia, PA: IEEE. https://doi.org/10.1109/SPMB.2017.8257019
+
+
+Zanetti, R., Pale, U., Teijeiro, T. & Atienza, D. Approximate zero-crossing: a new interpretable, highly discriminative and low
+complexity feature for EEG and iEEG seizure detection. J. Neural Eng. 19, 066018. https://doi.org/10.1088/1741-2552/aca1e4 
+(2022).
+
+Perez-Cruz F 2008 Kullback-Leibler divergence estimation of continuous distributions 2008 IEEE Inter. Symp. on Information Theory 1666–70

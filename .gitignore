@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# virtual environment
+.venv/
+
+# raw dataset — public on PhysioNet, too large to commit, and not ours to redistribute
+CHB-MIT Dataset/
+
+# generated pipeline output — reproducible by rerunning src/, not source of truth
+# (updated 2026-08-18: output/probs/ was the spec-1-era plan and never matched
+# what src/ actually writes — the real large/regenerable dirs are features/,
+# 04_predictions/, and 05a_threshold_sweep/; 06_results_*.csv and smaller stay tracked)
+output/features/
+output/04_predictions/
+output/05a_threshold_sweep/
+output/*.parquet
+output/_scratch/
+
+# debug logs / stdout-stderr captures from background pipeline runs
+output/_*.txt
+
+# throwaway preview renders made while checking a figure against its data (see
+# Consolidated-Context.md's make_figures.py notes) — never a deliverable
+output/07_figures/*_preview*.png
+
+# copyrighted reference papers — personal copies, not ours to redistribute
+paper/
+
+# old school report drafts — not part of the reproducible research artifact
+past-report.docx
+past-report.pdf
+~$*.docx
+~$*.doc
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# secrets, local overrides
+.env
+.claude/settings.local.json
+
+# AI-agent working context and private study notes — not part of the public
+# research artifact. AI-ASSISTANCE.md (the public statement of AI scope) stays
+# tracked; these are the internal working files it summarizes from.
+CLAUDE.md
+Consolidated-Context.md
+docs/learning-log.md
