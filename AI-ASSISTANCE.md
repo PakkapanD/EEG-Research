@@ -61,42 +61,66 @@
 
 ## 3. ส่วนที่ AI เขียนภายใต้สเปกของเจ้าของงาน
 
-ไล่ตาม `src/` ตามลำดับ data flow (Consolidated-Context.md §15.1)
+`src/` มี 27 ไฟล์ `.py` แบ่งเป็น 3 กลุ่มตามบทบาท — (3.1) โมดูลฐานที่ **นิยามฟังก์ชัน/ค่าคงที่**
+ถูกไฟล์อื่น import ไม่ได้ "รัน" เป็นขั้นตอน; (3.2) **สคริปต์ที่รันเป็นขั้นตอน** เรียงตามลำดับ
+data flow แต่ละตัวอ่านผลของขั้นก่อนแล้วเขียนไฟล์ผลของตัวเอง; (3.3) **สคริปต์ตรวจสอบ**
+ที่รันเมื่อไรก็ได้เพื่อยืนยันผลของขั้นหนึ่ง โดยไม่อยู่ในเส้นทางข้อมูลหลัก
 
-| ไฟล์ | ทำอะไร | สเปกที่กำกับ |
+### 3.1 โมดูลฐาน (library — ถูก import, ไม่ใช่ขั้นตอน)
+
+| โมดูล | นิยามอะไร | ถูกใช้โดย | สเปกที่กำกับ |
+|---|---|---|---|
+| `audit.py` (ส่วนค่าคงที่) | `OUTPUT_DIR`, `DATA_DIR`, `REQUIRED_CHANNELS`, `GLASS7_DEPENDENCY` | แทบทุกไฟล์ | — |
+| `preprocess.py` | เลือกไฟล์ (`tier_a_files`), เปิด/กรอง EDF (`open_recording`, `filtered_channel`), ตารางหน้าต่าง + ฉลาก (`window_schedule`, `window_metadata`, `label_window`, `parse_seizure_intervals`), ค่าคงที่หน้าต่าง | `run_pipeline`, `cv_folds`, `model_configs`, `evaluate`, `train`, `write_*` | CLAUDE.md §7; `metadata.json` → D1/D2 |
+| `features.py` | สูตรฟีเจอร์ 89 ตัว + `channel_feature_matrix` (ตัดหน้าต่าง+สกัดในรอบเดียว), `FEATURE_NAMES`, `BANDS`, `AZC_THRESHOLDS_UV` | `run_pipeline`, `train`, `validate_features`, `write_metadata` | CLAUDE.md §7; `metadata.json` → `features` |
+| `features_reference.py` | ฝาแฝดช้าดั้งเดิม แช่แข็ง ห้ามแก้/optimize | `validate_features`, `entropy_pilot` | — (หลักฐานว่า optimize แล้วค่าไม่เปลี่ยน) |
+| `postprocess.py` | `make_candidate_events` (threshold → event: smooth k≤1 → merge → drop-short → split-long), `percentile_to_threshold` | `evaluate_sweep`, `select_operating_points*`, `rescore_per_subject`, `build_final_results`, `build_tradeoff_curve`, `postprocessing_sensitivity` | docs/06 §6 |
+| `evaluate.py` | `score_fold`, `ground_truth_events`, `file_durations`, `sensitivity`, `fa_per_day` — ครอบ library `timescoring` (SzCORE หลัก + Ali รอง) | ทุกสคริปต์ที่ให้คะแนน | docs/06 §7; CLAUDE.md §13 |
+| `model_configs.py` | `CONFIGS` (7 channel set), `MODELS`, `LOO_CONFIGS`, `THRESHOLD_GRID` (279 จุด), `SUFFICIENCY_CRITERIA`, `MODEL_HYPERPARAMS` — `main()` เขียน `03_model_configs.json` | `train`, `evaluate_sweep`, `select_operating_points*`, `build_*` | docs/06 §4–5; CLAUDE.md §8 |
+
+หมายเหตุ: `evaluate_sweep.py` และ `select_operating_points.py` ทำสองบทบาท — เป็นทั้งขั้นตอนที่รัน (ดู 3.2)
+และโมดูลที่ไฟล์อื่น import ค่าคงที่/ฟังก์ชันไปใช้ (`MERGE_GAP_DEFAULT_SEC`, `MIN_EVENT_DURATION_DEFAULT_SEC`,
+`load_cv_folds`, `sweep_threshold_curve`, `pick_threshold`) — ดูข้อสังเกตเรื่องนี้ในรายงานแชทที่แนบมากับเอกสารนี้
+
+### 3.2 ลำดับการรัน (ต้นน้ำ → ปลายน้ำ)
+
+แต่ละแถว = สคริปต์ 1 ตัวที่สั่งรัน คอลัมน์ "อ่าน / เขียน" คือ dependency ของข้อมูล
+
+| ขั้น | สคริปต์ | อ่าน | เขียน | สเปก |
+|---|---|---|---|---|
+| 0 | `audit.py` | CHB-MIT EDF headers | `00_channel_audit.csv` / `.md` | CLAUDE.md §10 ขั้น 1 |
+| 1 | `run_pipeline.py` (เรียก `preprocess` + `features`, checkpoint ต่อไฟล์) | CHB-MIT + `00_channel_audit.csv` | `output/features/{subject}.parquet` | CLAUDE.md §7, §3 |
+| 1b | `write_dataset_summary.py` | `output/features/*.parquet` | `01_dataset_summary.md` | CLAUDE.md §10 ขั้น 5, §6.4 |
+| 1c | `write_metadata.py` | พารามิเตอร์ (import จาก `features`, `preprocess`) | `metadata.json` | CLAUDE.md §11 |
+| 2 | `cv_folds.py` | `01` / features | `02_cv_folds.json` | docs/06 §3 |
+| 2 | `model_configs.py` | — | `03_model_configs.json` | docs/06 §4–5 |
+| 3 | `train.py --run-all` | `features/`, `02`, `03` | `04_predictions/{config}_{model}_{fold}.parquet` (+ `.meta.json` จำนวนอิเล็กโทรดจริง) | docs/06 §5, §11; CLAUDE.md rule 7, §8 |
+| 4 | `evaluate_sweep.py --run-all` (~3 ชม.) | `04_predictions/`, `02`, `03` | `05a_threshold_sweep/*.parquet` (279-pt grid บน tuning, SzCORE+Ali) | docs/06 §7; CLAUDE.md rule 7 |
+| 4b | `postprocessing_sensitivity.py` | `05a` subset | `05_postprocessing_sensitivity.md`, `05b_..._raw.csv` | docs/06 §6, §12 |
+| 5 | `select_operating_points.py` | `05a` | `06_operating_points.csv` — absolute-threshold, **documented-failure finding เก็บไว้อ้างเป็น limitation ไม่ใช่ผลหลัก** | docs/06 §12; Consolidated-Context.md §5.12 A5 |
+| 5 | `select_operating_points_percentile.py` | `05a` | `06_operating_points_percentile.csv` **← pipeline ที่ใช้จริง** (+ `fallback_to_best_achievable`, แก้บั๊ก A12) | Consolidated-Context.md §5.12, §9 A12 |
+| 5b | `rescore_per_subject.py` | `06_operating_points_percentile.csv` | `06_operating_points_percentile_per_subject.csv` (5-fold คิดต่อ subject) | Consolidated-Context.md §7 A7 |
+| 6 | `build_final_results.py` | `06_operating_points_percentile*.csv`, `04`, features | `06_results_szcore.csv` **(แหล่งความจริงหลัก)**, `06_results_ali.csv`, `06a_..._raw.csv` | docs/06 §7–8 |
+| 6b | `measure_model_size.py` (refit RF/Full-18, RF/Glass-2 — import จาก `train`) | `features/`, `03` | `06d_model_size_inference.md` | docs/06 §8; CLAUDE.md rule 7 |
+| 7 | `build_figure_data.py` | `06_results_*.csv`, `06a` | `07_figures/data_channel_ladder.csv`, `data_per_patient_heatmap.csv`, `data_szcore_vs_ali.csv` | docs/06 §10–11 |
+| 7 | `build_tradeoff_curve.py` | `04_predictions/` (pooled test, grid หยาบ 45 จุด) | `07_figures/data_tradeoff_curve.csv` | docs/06 §10; Consolidated-Context.md §9 A14 |
+| 7 | `make_figures.py` | `07_figures/data_*.csv` | `07_figures/fig1–4.svg` | docs/06 §10–11 |
+
+### 3.3 สคริปต์ตรวจสอบ / วินิจฉัย (ยืนยันผลของขั้นก่อน ไม่อยู่ในเส้นทางข้อมูลหลัก)
+
+| สคริปต์ | ทำอะไร | ผลออก | ยืนยันขั้นไหน |
+|---|---|---|---|
+| `validate_features.py` | recompute ทั้ง 89 ฟีเจอร์สองทาง (`features` vs `features_reference`) บนหน้าต่าง EEG จริง | `00c_feature_parity.md` | ขั้น 1 (parity gate) |
+| `scan_nonfinite_features.py` | สแกน cell ±inf ในไฟล์ฟีเจอร์ (one-off — เจอบั๊ก `chb17b_69` แก้แล้ว 15 ส.ค. 2026) | `00e_nonfinite_feature_scan.md` | ขั้น 1 |
+| `spotcheck_hybrid_windowing.py` | RF pilot 8 subject / Full-18, 4 acceptance check ว่า hybrid windowing ไม่ทำให้ FA/day เพี้ยน | `00d_hybrid_windowing_spotcheck.md` | ขั้น 1 (windowing) |
+
+### 3.4 สาขาแยก — entropy pilot (ไม่อยู่ในเส้นทางหลัก — ตรวจฟีเจอร์กลุ่มที่ตัดออก ดูหัวข้อ 2)
+
+| สคริปต์ | ทำอะไร | ผลออก |
 |---|---|---|
-| `audit.py` | header audit ทุกไฟล์ EDF (ไม่โหลดสัญญาณ) → `00_channel_audit.csv/.md` | CLAUDE.md §10 ขั้น 1 |
-| `preprocess.py` | เลือกไฟล์, โหลด, กรองทั้งไฟล์, หั่นหน้าต่าง (hybrid), ติดฉลาก, ตัดช่องซ้ำตอนโหลด | พารามิเตอร์ล็อก CLAUDE.md §7; deviation D1/D2 ใน `metadata.json`; สเปก preprocessing ฉบับเต็ม (`docs/05-spec-preprocessing.md`) **หาไม่เจอใน repo — ต้องยืนยันกับเจ้าของงาน** |
-| `features.py` | สกัด 83 DIHC + 6 AZC = 89 ฟีเจอร์/ช่อง (เวอร์ชัน optimize) | CLAUDE.md §7; `metadata.json` → `features` |
-| `features_reference.py` | เวอร์ชันช้าดั้งเดิม แช่แข็งไว้เป็น ground truth ห้ามแก้/optimize | ใช้พิสูจน์ว่า optimize แล้วค่าฟีเจอร์ไม่เปลี่ยน |
-| `validate_features.py` | เทียบ `features.py` กับ `features_reference.py` บนหน้าต่าง EEG จริง → `00c_feature_parity.md` | parity gate |
-| `scan_nonfinite_features.py` | สแกนหา cell ±inf ในไฟล์ฟีเจอร์ → `00e` | diagnostic ไม่แก้ข้อมูล |
-| `spotcheck_hybrid_windowing.py` | pilot 8 subject / Full-18 / RF เดียว เช็ค 4 เกณฑ์ว่า hybrid windowing ไม่ทำให้ FA/day เพี้ยน → `00d` | docs/06 §2ก |
-| `run_pipeline.py` | runner checkpoint ต่อไฟล์ แล้ว consolidate เป็น `features/{subject}.parquet` | CLAUDE.md §3 |
-| `write_dataset_summary.py` | `01_dataset_summary.md` — ชักสั้นสุด, จำนวน window ของชักสั้น, จำนวน seizure ของเราเอง | CLAUDE.md §10 ขั้น 5, §6.4 |
-| `write_metadata.py` | `metadata.json` — บันทึกทุก deviation พร้อมเหตุผล/วันที่/ผู้อนุมัติ | CLAUDE.md §11 |
-| `cv_folds.py` | นิยาม fold (5-fold load-balanced ตาม seizure count + LOO ring) → `02_cv_folds.json` | docs/06 §3 |
-| `model_configs.py` | นิยาม 7 channel config + hyperparameter + grid → `03_model_configs.json` | docs/06 §4, §5; CLAUDE.md §8 |
-| `train.py` | เทรน RF/LR/MLP ต่อ (config, model, fold) → `04_predictions/` (probability ดิบ, บันทึกจำนวนอิเล็กโทรดจริงต่อ fold ใน meta.json) | docs/06 §5, §11; CLAUDE.md rule 7, §8 |
-| `postprocess.py` | threshold → candidate event (smoothing k≤1 → merge → drop-short → split-long) | docs/06 §6 |
-| `evaluate.py` | scoring SzCORE (หลัก) + Ali's rule (รอง) ผ่าน library `timescoring` | docs/06 §7; CLAUDE.md §13 |
-| `evaluate_sweep.py` | กวาด threshold grid 279 จุดบน tuning split ทุก (config, model, fold) เก็บทั้งเส้น | docs/06 §7; CLAUDE.md rule 7 |
-| `postprocessing_sensitivity.py` | sensitivity ของ merge_gap × min_duration บน subset เล็ก → `05_...md`, `05b_...raw.csv` | docs/06 §6, §12 (open item 4) |
-| `select_operating_points.py` | absolute-threshold pipeline → `06_operating_points.csv` (**documented failure finding, ห้ามแก้**) | docs/06 §12; Consolidated-Context.md §5.12 A5 |
-| `select_operating_points_percentile.py` | **pipeline ที่ใช้จริง** — percentile-calibrated threshold + `fallback_to_best_achievable` (แก้บั๊ก A12) | Consolidated-Context.md §5.12, §9 A12 |
-| `rescore_per_subject.py` | คิด pass/fail ของ 5-fold ต่อ subject (เหมือน LOO) ไม่ใช่ต่อกลุ่ม fold — แก้ floor effect | Consolidated-Context.md §7 A7 |
-| `build_final_results.py` | รวมผลเป็น `06_results_szcore.csv` (**แหล่งความจริงหลัก**) + `06_results_ali.csv` + `06a_..._raw.csv` | docs/06 §7–8 |
-| `measure_model_size.py` | refit RF/Full-18 กับ RF/Glass-2 วัดขนาดโมเดล + inference time → `06d` | docs/06 §8; CLAUDE.md rule 7 |
-| `build_figure_data.py` | เตรียมข้อมูล 3 กราฟ (channel ladder, per-patient heatmap, SzCORE-vs-Ali) → `07_figures/data_*.csv` | docs/06 §10–11 |
-| `build_tradeoff_curve.py` | เตรียมข้อมูลกราฟ tradeoff (grid หยาบ 45 จุดแยกต่างหาก) → `data_tradeoff_curve.csv` | docs/06 §10; Consolidated-Context.md §9 A14 |
-| `make_figures.py` | render `fig1–4.svg` จากไฟล์ `data_*.csv` | docs/06 §10–11 |
-| `entropy_pilot.py` | สกัดเฉพาะ 9 คอลัมน์ `entropyProfiled_*` บน 2000 window / 79 ไฟล์ | CLAUDE.md §7 (open item); Consolidated-Context.md §9 A17 |
-| `entropy_pilot_analyze.py` | chi-squared ต่อช่อง (89+9=98 ฟีเจอร์) เช็คว่า entropyProfiled จะติด top-30 ไหม → `00f_entropy_pilot.md` | Consolidated-Context.md §9 A17 |
-| `entropy_pilot_impact_test.py` | GroupKFold(5) Full-18 เทียบ AUC-ROC pool 89 vs 90 ฟีเจอร์ → `00f_..._impact_test.md` | Consolidated-Context.md §9 A17b |
-
-**เอกสารสเปกที่ยังหาไม่เจอใน repo (ต้องยืนยันกับเจ้าของงานว่าอยู่ที่อื่นหรือหายจริง):**
-`docs/05-spec-preprocessing.md`, ฉบับภาษาอังกฤษของสเปก 2, literature review, reading plan —
-โฟลเดอร์ `docs/` มีไฟล์เดียว: `06-spec2-cv-training-postprocessing-evaluation-th.md`
+| `entropy_pilot.py` | สกัดเฉพาะ 9 คอลัมน์ `entropyProfiled_*` บน 2000 window / 79 ไฟล์ | `00f_entropy_pilot_features.parquet` |
+| `entropy_pilot_analyze.py` | chi-squared ต่อช่อง (89+9=98 ฟีเจอร์) เช็คว่า entropyProfiled ติด top-30 ไหม | `00f_entropy_pilot.md` |
+| `entropy_pilot_impact_test.py` | GroupKFold(5) Full-18 เทียบ AUC-ROC pool 89 vs 90 ฟีเจอร์ | `00f_entropy_pilot_impact_test.md` |
 
 ---
 
