@@ -17,6 +17,7 @@ CHB-MIT Dataset/
 output/features/
 output/04_predictions/
 output/05a_threshold_sweep/
+output/00f_entropy_pilot_parts/
 output/*.parquet
 output/_scratch/
 
