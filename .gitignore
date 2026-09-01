@@ -11,9 +11,9 @@ __pycache__/
 CHB-MIT Dataset/
 
 # generated pipeline output — reproducible by rerunning src/, not source of truth
-# (updated 2026-08-18: output/probs/ was the spec-1-era plan and never matched
-# what src/ actually writes — the real large/regenerable dirs are features/,
-# 04_predictions/, and 05a_threshold_sweep/; 06_results_*.csv and smaller stay tracked)
+# (updated 2026-09-01: the large/regenerable dirs are features/, 04_predictions/,
+# 05a_threshold_sweep/, and 00f_entropy_pilot_parts/; 06_results_*.csv and smaller
+# stay tracked. output/probs/ was a spec-1-era name that src/ never used.)
 output/features/
 output/04_predictions/
 output/05a_threshold_sweep/
@@ -31,11 +31,13 @@ output/07_figures/*_preview*.png
 # copyrighted reference papers — personal copies, not ours to redistribute
 paper/
 
-# old school report drafts — not part of the reproducible research artifact
+# report drafts — prose is written outside this repo; not part of the
+# reproducible research artifact
 past-report.docx
 past-report.pdf
 ~$*.docx
 ~$*.doc
+Methodology.txt
 
 # OS / editor cruft
 .DS_Store
@@ -53,3 +55,4 @@ Thumbs.db
 CLAUDE.md
 Consolidated-Context.md
 docs/learning-log.md
+docs/report-writing-log.md

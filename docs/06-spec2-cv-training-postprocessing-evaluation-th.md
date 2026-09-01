@@ -46,8 +46,13 @@ repo นี้เลย** (เหมือนสถานการณ์เด�
   - แหล่งอ้างอิง: Beniczky & Ryvlin 2018 (Epilepsia)
 - รายงานทั้ง macro (ค่าเฉลี่ยต่อผู้ป่วย) และ micro (รวมทุกเหตุการณ์)
   sensitivity ทุกครั้ง พร้อมอธิบายช่องว่างระหว่างสองค่า
-- แบ่งกลุ่มผลลัพธ์ตาม seizure onset zone เป็นคอลัมน์ตั้งแต่ต้น (ที่มาของ
-  label ยังต้องตัดสินใจ — ดูข้อ 9)
+- แบ่งกลุ่มผลลัพธ์ตาม seizure onset zone เป็นคอลัมน์ตั้งแต่ต้น — **✅ ตัดสินใจแล้ว
+  (ดูข้อ 9): ใช้เป็น case study เฉพาะ chb17 เท่านั้น** (คนเดียวที่ validate จากวรรณกรรมได้)
+  ที่เหลือปล่อยว่าง เขียนใน Limitations
+- เกณฑ์ label หน้าต่าง: ซ้อนทับ seizure interval ≥ 50% ของความยาวหน้าต่าง → label 1
+  (`preprocess.py` `LABEL_OVERLAP_FRACTION=0.5`; `metadata.json → windowing.label_rule`).
+  **สถานะ:** `label_rule_locked_level = "3 - arbitrary choice, requires sensitivity analysis"` —
+  **sensitivity analysis เทียบ 30/50/70% ยังไม่เคยรัน** ต้องเขียนใน Limitations ว่ายังไม่ได้ทำ
 
 ---
 

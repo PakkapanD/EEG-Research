@@ -77,7 +77,7 @@ CONFIGS = {
                "ranking_pool": DOUBLE_BANANA_CHANNELS},
 }
 
-LOO_CONFIGS = ["Full-18", "Glass-2", "Glass-7"]  # spec 2 section 3, proposed
+LOO_CONFIGS = ["Full-18", "Glass-2", "Glass-7"]  # spec 2 section 3, confirmed/locked (decision A8); not extended to all 7 configs by design
 MODELS = ["rf", "lr", "mlp"]
 
 # ---------------------------------------------------------------------------
@@ -146,7 +146,7 @@ THRESHOLD_GRID = sorted(set(round(t, 4) for t in
 POSTPROCESSING_GRID = {
     "smoothing_k": [1],  # capped at 1 - k=2 spans 8s, longer than the 6s shortest seizure
     "min_event_duration_sec": [0, 1, 2],  # must stay < 3s (half the shortest seizure)
-    "merge_gap_sec": [0, 4, 8, 12, 16, 20, 30],  # grid-aligned (30 behaves as 28 - see note below)
+    "merge_gap_sec": [0, 4, 8, 12, 16, 20, 28],  # 4s-grid-aligned; 28 = 7 grid steps (30 would behave identically at 4s spacing)
     "max_event_duration_sec": 300,  # SzCORE's own 5-minute split ceiling, not a free parameter
 }
 
@@ -164,7 +164,7 @@ def main():
             for name, cfg in CONFIGS.items()
         },
         "loo_configs": LOO_CONFIGS,
-        "loo_configs_status": "proposed in spec 2 section 3, not yet confirmed",
+        "loo_configs_status": "confirmed/locked - spec 2 section 3, decision A8 (not extended to all 7 configs by design)",
         "models": MODELS,
         "model_hyperparams": MODEL_HYPERPARAMS,
         "n_features_per_channel_selected": N_FEATURES_PER_CHANNEL_SELECTED,

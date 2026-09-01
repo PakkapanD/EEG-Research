@@ -1,5 +1,15 @@
 # Per-file Tier Breakdown (Tier A vs Tier B)
 
+> ⚠️ **SUPERSEDED — pre-decision snapshot.** Written while the two-tier question was
+> still open. The "17 subjects / 470 files" `INCLUDED_RAW_SUBJECTS` rollup, the
+> "7 subjects excluded" note, and the "Tension with CLAUDE.md section 6" section all
+> describe the **rejected** approach (impose the Glass-7 channel requirement on every
+> config). Final design: **two-tier subject base — 23 subjects in BOTH tiers, none
+> excluded.** Glass-7 runs on the Tier B subset of *files*; every other config uses
+> full Tier A. See `output/metadata.json` -> `subjects.selection_deviation` and
+> `file_admission`, and `output/01_dataset_summary.md` section 1.
+> The per-file Tier A/B counts in the table below are still correct; only the framing is stale.
+
 Computed from `output/00_channel_audit.csv`, per-file (not per-subject).
 
 - **Tier A** = all 18 double-banana channels present, file not monopolar. Sufficient for

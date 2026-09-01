@@ -59,7 +59,7 @@ SUBSET = [
 ]
 MODEL = "rf"
 
-MERGE_GAP_GRID = [0, 4, 8, 12, 16, 20, 30]
+MERGE_GAP_GRID = [0, 4, 8, 12, 16, 20, 28]  # was 30; 28 = 7 grid steps, identical behaviour at 4s spacing. output/05b_...csv still carries the old "30" label (scores unchanged) unless re-run.
 MIN_EVENT_DURATION_GRID = [0, 1, 2]
 LOCKED_DEFAULT = (8.0, 1.0)  # what the main 06_results run used - see report
 

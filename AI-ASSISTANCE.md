@@ -14,10 +14,10 @@
 | ช่องทาง | หน้าที่ |
 |---|---|
 | **Claude Code** (รันในโฟลเดอร์ repo) | เขียนโค้ดทั้งหมดใน `src/` (27 ไฟล์), รันการทดลอง (preprocessing, feature extraction, training sweep 312 runs, evaluation, sensitivity analysis, entropy pilot), สร้างตารางผลและกราฟทั้ง 4 รูป, เขียนไฟล์ `.md` สรุปผลและ `metadata.json` ใน `output/` |
-| **Claude (แชท / เอกสาร)** | งานเขียน: รายงานภาษาอังกฤษ, Related Work, แก้รายงานไทยฉบับเดิม, สไลด์, การทำความเข้าใจเนื้อหาเพื่อตอบคำถาม — ทำนอก repo นี้ |
+| **Claude (แชท / เอกสาร)** | งานเขียน: รายงานภาษาอังกฤษ, Related Work, สไลด์, การทำความเข้าใจเนื้อหาเพื่อตอบคำถาม — ทำนอก repo นี้ |
 
 - ตัว **เอกสาร** `CLAUDE.md`, `Consolidated-Context.md` และสเปกใน `docs/` ถูกร่างโดย Claude — `CLAUDE.md` เป็นการเรียบเรียงข้อกำหนดและการตัดสินใจของเจ้าของงานให้อยู่ในรูปที่ Claude Code ใช้เป็นบริบทถาวรได้ ตัวการตัดสินใจเชิงวิจัยที่บันทึกอยู่ในนั้น (หัวข้อ 2) เป็นของเจ้าของงาน — หลักฐานการอนุมัติแยกอยู่ใน `metadata.json` (`who_approved`) และ docstring ("approved", "flagged for objection")
-- repo นี้ยังไม่มี `git init` ณ วันที่เขียนเอกสารนี้
+- repo นี้ `git init` แล้ว (branch `main`) — `CLAUDE.md`, `Consolidated-Context.md`, `docs/learning-log.md` อยู่ใน `.gitignore` (เอกสารทำงานภายใน ไม่ขึ้น public)
 
 ---
 
@@ -27,11 +27,11 @@
 |---|---|---|
 | แยกตัวแปรต้นเป็น 2 มิติ: จำนวนช่อง (18/7/4/2) กับ ข้อจำกัดตำแหน่ง — `Best-n` (เลือกจากข้อมูล) เทียบ `Glass-n` (ตำแหน่งถูกกรอบแว่นบังคับ) ช่องว่างระหว่างสองเส้นคือคำตอบ | ถ้าลดช่องแล้ววัดแค่ประสิทธิภาพตก จะแยกไม่ออกว่าตกเพราะจำนวนช่องน้อยลง หรือเพราะตำแหน่งที่กรอบแว่นบังคับไม่เหมาะ | CLAUDE.md §1, §8 |
 | ใช้หลายโมเดล (RF, LogReg, MLP) เป็นตัวควบคุม ห้ามวางกรอบผลเป็น "ML vs DL" | ถ้าเส้นโค้งรูปร่างเหมือนกันข้ามโมเดล แปลว่าเป็นสมบัติของข้อมูล ไม่ใช่ของโมเดลตัวใดตัวหนึ่ง | CLAUDE.md §1 |
-| ใช้ derivation สาย F: `F7-T7` / `F8-T8` เป็นช่องหลักของ `Glass-*` (ไม่ใช่ `T7-P7` / `T8-P8`) | e-Glass จริง (Sopic 2018) วางอิเล็กโทรดที่ F7, T3(=T7), F8, T4(=T8); P7/P8 อยู่นอกระยะที่ขากรอบแว่นเอื้อมถึง; รายงานไทยฉบับเดิมใช้ `T7-P7`/`T8-P8` ใน Abstract + บทที่ 3 ขัดกับ objective ของตัวเอง | CLAUDE.md §8; `03_model_configs.json` → `configs` |
-| รวม `chb01` + `chb21` เป็น subject เดียว → เหลือ 23 subject | เป็นผู้ป่วยคนเดียวกันบันทึกห่างกัน ~1.5 ปี ถ้าไม่รวม เวลา chb21 อยู่ชุดทดสอบ chb01 จะอยู่ชุดเทรน = patient leakage (รายงานเดิมมีบั๊กนี้จริง บทที่ 3.2.4) | CLAUDE.md §6.1; `metadata.json` → `subjects` |
+| ใช้ derivation สาย F: `F7-T7` / `F8-T8` เป็นช่องหลักของ `Glass-*` (ไม่ใช่ `T7-P7` / `T8-P8`) | e-Glass จริง (Sopic 2018) วางอิเล็กโทรดที่ F7, T3(=T7), F8, T4(=T8); P7/P8 อยู่นอกระยะที่ขากรอบแว่นเอื้อมถึง | CLAUDE.md §8; `03_model_configs.json` → `configs` |
+| รวม `chb01` + `chb21` เป็น subject เดียว → เหลือ 23 subject | เป็นผู้ป่วยคนเดียวกันบันทึกห่างกัน ~1.5 ปี ถ้าไม่รวม เวลา chb21 อยู่ชุดทดสอบ chb01 จะอยู่ชุดเทรน = patient leakage | CLAUDE.md §6.1; `metadata.json` → `subjects` |
 | ตัด 3 ไฟล์ monopolar ของ chb12 | montage ต่างจากไฟล์อื่น ตัดตาม Zanetti et al. 2022 (auto-detect จาก header) | CLAUDE.md §6.2; `metadata.json` → `file_admission.excluded_files` |
 | ตัดช่องซ้ำ `P7-T7` (กลับขั้วของ `T7-P7`) และ `T8-P8` ตัวที่สอง ตั้งแต่ตอนโหลดไฟล์ | ถ้าไม่ตัด `Best-2` อาจเลือกทั้ง `T7-P7` และ `P7-T7` แล้วกลายเป็น `Best-1` โดยไม่มีใครรู้ | CLAUDE.md §6.3; `metadata.json` → `channels.dropped_duplicates_at_load_time` |
-| CV แบบ subject-wise: 5-fold sweep + LOO สำหรับ config หลัก (Full-18, Glass-2, Glass-7) | รายงานเดิมแบ่ง train/tuning/test แบบ fixed patient list ซึ่ง leak; subject-wise บังคับให้ทดสอบข้ามผู้ป่วยจริง | CLAUDE.md §7; docs/06 §3 |
+| CV แบบ subject-wise: 5-fold sweep + LOO สำหรับ config หลัก (Full-18, Glass-2, Glass-7) | การแบ่งตาม record ทำให้ผู้ป่วยคนเดียวกันข้ามชุด train/test ได้ = patient leakage; subject-wise บังคับให้ทดสอบข้ามผู้ป่วยจริง | CLAUDE.md §7; docs/06 §3 |
 | Pre-register เกณฑ์ "พอ" ก่อนเห็นผล และห้ามแก้หลังเห็นผล (ปรับยา: Sens≥60%/FA≤5·วัน⁻¹; แจ้งเตือนเรียลไทม์: Sens≥80%/FA≤2·วัน⁻¹) | อ้าง Beniczky & Ryvlin 2018 (Phase 0); ตั้งเกณฑ์หลังเห็นผลคือการขยับเป้า | CLAUDE.md §14; docs/06 §1; `03_model_configs.json` → `sufficiency_criteria` |
 | ปฏิเสธข้อเสนอเปลี่ยน metric หลักของกราฟ channel-ladder ไปเป็น AUC-ROC หลังเห็นว่า pass rate noisy — คงไว้ที่ event-level per-subject pass rate (SzCORE) เป็นหลัก AUC-ROC เป็นกราฟเสริม | (1) pipeline ออกแบบมาตอบคำถามคลินิก; (2) เปลี่ยน metric หลักหลังเห็นผลเสี่ยงถูกมองว่าขยับเป้า; (3) LOO กับ 5-fold-per-subject ให้ตัวเลขใกล้กัน = ไม่ใช่ noise ล้วน | Consolidated-Context.md §7 A8 |
 | ตัดสินใจไม่ทำ FA-margin (option 2 ของ threshold selection) | near-miss analysis พบมีแค่ 2/168 fold ที่เป็น near-miss จริง margin ช่วยได้ 2–5 fold ไม่คุ้มเวลา | Consolidated-Context.md §5.12, §7 A6 |
@@ -47,7 +47,6 @@
 | ตัดสินใจไม่ overlay จุด operating point ของ Ali 2024 บนกราฟหลัก (เก็บเป็นตาราง/footnote) | หน่วยเป็นต่อชั่วโมง แปลงแล้ว ~115–128/วัน เกินเกณฑ์ Beniczky >20 เท่า ทำให้แกน x ยืดจนโซนคลินิก 0–5/วัน อ่านไม่ออก; Ali ไม่ได้ทำ threshold sweep เทียบบนเส้นเดียวกันไม่ได้ | docs/06 §10 (A13) |
 | ตัดสินใจไม่ทำ detection latency | `timescoring`'s EventScoring ไม่เปิด per-event ref↔hyp matching ต้องเขียน matching logic เองแยก — deferred อย่างมีเหตุผล เขียนใน Limitations | docs/06 §8; `build_final_results.py` docstring |
 | คง chb17 ไว้เป็น onset-zone case study แม้ข้อมูลจริงขัดกับสมมติฐานเดิม (Glass-7 กลับทำได้ดีที่ chb17) | ผลที่ขัดสมมติฐานน่าสนใจกว่าเดิม เขียนเป็น open/contradictory finding | docs/06 §9 (B1); Consolidated-Context.md §8 |
-| ยังไม่ `git init` ตอนนี้ (ทำทีหลัง) `.gitignore` เตรียมไว้แล้ว | เจ้าของงานตัดสินใจ 18 ส.ค. 2026 | Consolidated-Context.md §3, §11 |
 
 ข้อที่หลักฐานในเอกสารระบุว่า AI เป็นผู้เสนอทางเลือกทางเทคนิคแล้วเจ้าของงานอนุมัติ (บันทึกเพื่อความครบถ้วน):
 
@@ -126,7 +125,7 @@ data flow แต่ละตัวอ่านผลของขั้นก่�
 
 ## 4. ข้อจำกัดของเอกสารฉบับนี้
 
-- เป็น snapshot **ณ วันที่ 29 สิงหาคม 2026** สังเคราะห์จาก: `CLAUDE.md`, `Consolidated-Context.md`, `docs/06-spec2-cv-training-postprocessing-evaluation-th.md`, module docstring ของทั้ง 27 ไฟล์ใน `src/`, `output/metadata.json`, `output/03_model_configs.json`
+- เป็น snapshot **ณ วันที่ 1 กันยายน 2026** สังเคราะห์จาก: `CLAUDE.md`, `Consolidated-Context.md`, `docs/06-spec2-cv-training-postprocessing-evaluation-th.md`, module docstring ของทั้ง 27 ไฟล์ใน `src/`, `output/metadata.json`, `output/03_model_configs.json`
 - ไม่ได้อ่านโค้ดบรรทัดต่อบรรทัด — หัวข้อ 3 อ้างจาก docstring ระดับ module เป็นหลัก
 - คอลัมน์อ้างอิงในหัวข้อ 2 ยึดถ้อยคำในเอกสาร (`who_approved`, "approved", "flagged for objection", "Project owner chose") — จุดที่เอกสารไม่ได้ระบุว่าใครริเริ่มข้อเสนอ ไม่เดาแทน
 - อัปเดตครั้งถัดไปเมื่อ: เริ่มร่างรายงาน, `git init`, หรือมีการเบี่ยงเบนจากพารามิเตอร์ที่ล็อกเพิ่ม

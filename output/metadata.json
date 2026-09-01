@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T14:32:43.052018",
+  "generated_at": "2026-09-01T01:37:36.049902",
   "random_state": 42,
   "sampling_rate_hz": 256,
   "filter": {
@@ -237,13 +237,15 @@
       "azc_128",
       "azc_256"
     ],
-    "feature_selection": "NONE at this stage - raw features only, chi-squared selection happens inside each CV fold in spec 2 (not yet written)",
-    "scaling_normalization": "NONE at this stage - to be fit inside each CV fold in spec 2",
+    "feature_selection": "NONE in the feature parquet - raw features only. chi-squared selection (top-30 per channel) is fit inside each CV fold by train.py (spec 2 / docs/06, written and run).",
+    "scaling_normalization": "NONE in the feature parquet - MinMaxScaler is fit inside each CV fold by train.py (spec 2 / docs/06, written and run).",
     "feature_scope_deviation": {
       "what": "The 9 entropyProfiled_* features (entropyProfiled_total/average/maximum/minimum/median/standardDeviation/variance/kurtosis/skewness_sampleEntropy) are dropped from the 92-feature DIHC_FeatureManager-equivalent library. 83 of 92 DIHC features + all 6 AZC features are extracted (89 features x 21 channels = 1869 feature columns).",
       "why": "Benchmarked on real EEG (not synthetic data): the entropy-profile computation costs ~496 ms per channel per window, against 19.1 ms for all 89 retained features combined. It would roughly triple the extraction cost even after the same kind of rewrite the other O(N^2) entropies received, and would add a second bespoke kernel to audit for fidelity to the upstream source.",
       "correction_to_earlier_record": "The 2026-08-12 version of this entry justified the drop with '~68 days for all 92 features' and '~1 ms for the other 83 features combined', and predicted ~2.4 days for the 83. Both were wrong: the 83 features measured 100.3 ms per channel per window, and the run they predicted at 2.4 days was on track for ~17.5 days when it was killed. The decision stands on the corrected numbers above; the superseded figures must not be quoted in the paper.",
-      "who_approved": "Project owner, 2026-08-12; re-confirmed 2026-08-14 after the numbers were corrected.",
+      "rebenchmark_2026_08_19": "entropyProfiled re-benchmarked on real data at ~1.4-1.5 s per channel per window - about 3x the ~496 ms above, which is also a superseded estimate. Extracting the 9 entropyProfiled_* features for the whole dataset (18,984,141 channel-windows) would take ~259 days at the measured pilot rate (1.178 s/channel-window). Keeping only entropyProfiled_total saves nothing: sample_entropy_profile() must be computed in full before any summary statistic. Full-dataset extraction is infeasible and will not be run.",
+      "pilot_result_2026_08_19": "chi-squared pilot (2000 stratified windows, 13 subjects, 79 files; output/00f_entropy_pilot.md): entropyProfiled_total_sampleEntropy places in the chi-squared top-30 in all 21 of 21 scoreable channels (best feature in most). So the exclusion is NOT a harmless cost-only deviation - it must be written as a real limitation in Methods. A lightweight impact test (output/00f_entropy_pilot_impact_test.md; Full-18, GroupKFold(5), window-level AUC-ROC only) found adding entropyProfiled_total changes pooled AUC by +0.0010 (0.6629 -> 0.6638), i.e. the univariate chi-squared signal does not translate into a measurable cross-subject generalisation gain in that small test. Limitation is two-layer: (1) dropped for cost, not for lack of value; (2) preliminary evidence that it may not help generalisation much.",
+      "who_approved": "Project owner, 2026-08-12; re-confirmed 2026-08-14 after the numbers were corrected; not-run-on-full-dataset decision confirmed jointly 2026-08-19.",
       "deviates_from": "The preprocessing spec's 'extract all 92, no selection at this stage'.",
       "must_be_stated_in_paper": true
     },
@@ -360,6 +362,16 @@
     },
     "n_excluded_files": 3,
     "excluded_subjects": []
+  },
+  "known_comparison_limitations": {
+    "glass7_vs_best7": {
+      "what": "The Best-7 vs Glass-7 comparison is the weakest rung of the channel ladder, and both sources of unfairness lean in Glass-7's favour. It must not carry the study's headline claim about the cost of the eyeglass position constraint; that claim rests on Best-4 vs Glass-4 and Best-2 vs Glass-2, which share both the candidate pool and the 181-seizure Tier A base.",
+      "problem_1_candidate_pool": "Best-7 is selected from the 18 double-banana channels, which do NOT contain T7-FT9 / FT9-FT10 / FT10-T8 - three of Glass-7's seven channels. This is not 'free choice vs a constrained subset of the same universe', it is two partly disjoint universes. 'Best-7' here means 'best 7 of a standard double-banana montage', not 'best possible 7'; selection allowed the full 21 unique derivations could do better. Consequence: if Glass-7 matches or beats Best-7 (finding B1 in Consolidated-Context.md, seen intermittently), that does not cleanly show the position constraint is free, because Best-7 was not allowed the full pool either. Rationale for the restriction: the FT9-chain channels ARE the glasses-frame derivations, so putting them in Best-7's pool would let Best-7 pick the glasses channels and blur the unconstrained-vs-constrained contrast rather than sharpen it - a defensible trade-off, but one to state plainly.",
+      "problem_2_evaluation_base": "Glass-7 is scored on Tier B (640 files / 917.48 h / 177 seizures); Best-7 on Tier A (668 / 945.49 / 181). No subject is dropped - 23 in both tiers - but the files Tier B loses are concentrated in hard cases: the 4 missing seizures (181 -> 177) are all from chb13 (12 -> 10) and chb16 (10 -> 8), the two shortest-seizure subjects in the dataset (chb16 holds the 6 s minimum; chb13 is a mechanism-1 short/sparse case, Consolidated-Context.md B3). Glass-7 is therefore evaluated on a marginally easier base than Best-7 - about 2.2% of seizures, and the hardest 2.2%.",
+      "how_to_report": "Always state Glass-7's base (177 seizures / 917.48 h) next to any number compared with a Tier A config. Define Best-7 in Methods as 'best 7 of the 18 double-banana channels', not 'best possible 7'. Draw the position-cost conclusion from n=4 and n=2 only. In fig1 (x-axis = electrode count) Glass-7 sits at 8 electrodes and Best-7 near 10-14, so they are not at the same x; the caption should still flag the base and pool difference.",
+      "identified": "Project owner, 2026-08-30, in an interactive session with Claude Code.",
+      "must_be_stated_in_paper": true
+    }
   },
   "software_versions": {
     "python": "3.13.2 (tags/v3.13.2:4f8bb39, Feb  4 2025, 15:23:48) [MSC v.1942 64 bit (AMD64)]",

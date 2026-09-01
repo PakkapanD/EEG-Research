@@ -84,7 +84,7 @@
     "Glass-2",
     "Glass-7"
   ],
-  "loo_configs_status": "proposed in spec 2 section 3, not yet confirmed",
+  "loo_configs_status": "confirmed/locked - spec 2 section 3, decision A8 (not extended to all 7 configs by design)",
   "models": [
     "rf",
     "lr",
@@ -145,7 +145,7 @@
       12,
       16,
       20,
-      30
+      28
     ],
     "max_event_duration_sec": 300
   },

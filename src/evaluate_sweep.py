@@ -42,7 +42,7 @@ LOG_PATH = OUTPUT_DIR / "_sweep_log.txt"
 # Fixed for the main threshold sweep - see module docstring. merge_gap=8s (2
 # grid windows) and min_event_duration=1s are mid-range, legal choices from
 # the locked/proposed grids (spec 2 section 6): min_event_duration=1s is
-# inside the <3s ceiling, merge_gap=8s inside the proposed {0..30}s set.
+# inside the <3s ceiling, merge_gap=8s inside the {0,4,8,12,16,20,28}s set.
 MERGE_GAP_DEFAULT_SEC = 8.0
 MIN_EVENT_DURATION_DEFAULT_SEC = 1.0
 
