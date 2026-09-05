@@ -130,7 +130,7 @@
       "Glass-2",
       "Glass-7"
     ],
-    "recommended_configs_status": "proposed in spec 2 section 3, not yet confirmed",
+    "recommended_configs_status": "confirmed/locked, spec 2 section 3, decision A8 (upper bound / Zanetti-2025-comparable / glasses main config; LOO intentionally not extended to all 7 configs)",
     "folds": {
       "chb16": {
         "held_out": "chb16",

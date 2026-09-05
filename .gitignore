@@ -33,11 +33,11 @@ paper/
 
 # report drafts — prose is written outside this repo; not part of the
 # reproducible research artifact
-past-report.docx
-past-report.pdf
+writing/
+# Word lock/temp files land next to any open .docx, including at repo root
+# where writing/ would not catch them
 ~$*.docx
 ~$*.doc
-Methodology.txt
 
 # OS / editor cruft
 .DS_Store

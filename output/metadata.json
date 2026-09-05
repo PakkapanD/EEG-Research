@@ -370,7 +370,13 @@
       "problem_2_evaluation_base": "Glass-7 is scored on Tier B (640 files / 917.48 h / 177 seizures); Best-7 on Tier A (668 / 945.49 / 181). No subject is dropped - 23 in both tiers - but the files Tier B loses are concentrated in hard cases: the 4 missing seizures (181 -> 177) are all from chb13 (12 -> 10) and chb16 (10 -> 8), the two shortest-seizure subjects in the dataset (chb16 holds the 6 s minimum; chb13 is a mechanism-1 short/sparse case, Consolidated-Context.md B3). Glass-7 is therefore evaluated on a marginally easier base than Best-7 - about 2.2% of seizures, and the hardest 2.2%.",
       "how_to_report": "Always state Glass-7's base (177 seizures / 917.48 h) next to any number compared with a Tier A config. Define Best-7 in Methods as 'best 7 of the 18 double-banana channels', not 'best possible 7'. Draw the position-cost conclusion from n=4 and n=2 only. In fig1 (x-axis = electrode count) Glass-7 sits at 8 electrodes and Best-7 near 10-14, so they are not at the same x; the caption should still flag the base and pool difference.",
       "identified": "Project owner, 2026-08-30, in an interactive session with Claude Code.",
-      "must_be_stated_in_paper": true
+      "must_be_stated_in_paper": true,
+      "problem_2_quantified": {
+        "measured": "Re-scored every Tier A config (rf) at its locked percentile-calibrated operating points on the Tier B file subset and compared to Tier A. SzCORE: micro-sensitivity +0.003 to +0.008 absolute (mean +0.005; e.g. Full-18/LOO 0.366 -> 0.374, +2.2% relative, matching the 4/181 denominator drop). micro-FA/day -4.3% to +3.1% (mean +1.7%; sign depends on whether the dropped files carried more false positives or more recorded hours). Per-subject pass rate (the locked primary metric): unchanged for every config and criterion (delta 0.0 pp). Ali rule: micro-sensitivity shift <=+0.003, pass rate delta 0.0 pp. Conclusion: the Tier A->B base change flatters Glass-7 on the continuous metrics by well under one sensitivity point and a few percent FA, and not at all on the pass/fail conclusion.",
+        "script": "src/glass7_tier_effect.py",
+        "output": "output/01b_tier_effect_glass7.md (+ 01b_tier_effect_glass7_raw.csv)",
+        "computed": "Claude Code, 2026-09-03"
+      }
     }
   },
   "software_versions": {
